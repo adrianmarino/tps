@@ -1,18 +1,19 @@
-﻿var cam : Camera;
-var cam1 : Camera;
- 
+﻿var thirdPersonCamera : Camera;
+var firstPersonCamera : Camera;
+var firstPersonCameraKey : String = "1";
+var thirdPersonCameraKey : String = "2";
+
 function Start () {
-    cam.enabled=true;
-    cam1.enabled=false;
+    thirdPersonCamera.enabled = true;
+    firstPersonCamera.enabled = false;
 }
- 
+
 function Update () {
-    if(Input.GetKeyDown("1")) {
-        cam.enabled=true;
-        cam1.enabled=false;
-    } 
-    if(Input.GetKeyDown("2")) {
-        cam.enabled=false;
-        cam1.enabled=true;
+    if(Input.GetKeyDown(thirdPersonCameraKey)) {
+        thirdPersonCamera.enabled = true;
+        firstPersonCamera.enabled = false;
+    } else if(Input.GetKeyDown(firstPersonCameraKey)) {
+        thirdPersonCamera.enabled = false;
+        firstPersonCamera.enabled = true;
     }
 }
