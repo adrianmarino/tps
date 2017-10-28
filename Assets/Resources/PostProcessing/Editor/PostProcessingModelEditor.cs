@@ -5,75 +5,77 @@ using System.Linq.Expressions;
 
 namespace UnityEditor.PostProcessing
 {
-    public class PostProcessingModelEditor
-    {
-        public PostProcessingModel target { get; internal set; }
-        public SerializedProperty serializedProperty { get; internal set; }
+	public class PostProcessingModelEditor
+	{
+		public PostProcessingModel target { get; internal set; }
 
-        protected SerializedProperty m_SettingsProperty;
-        protected SerializedProperty m_EnabledProperty;
+		public SerializedProperty serializedProperty { get; internal set; }
 
-        internal bool alwaysEnabled = false;
-        internal PostProcessingProfile profile;
-        internal PostProcessingInspector inspector;
+		protected SerializedProperty m_SettingsProperty;
+		protected SerializedProperty m_EnabledProperty;
 
-        internal void OnPreEnable()
-        {
-            m_SettingsProperty = serializedProperty.FindPropertyRelative("m_Settings");
-            m_EnabledProperty = serializedProperty.FindPropertyRelative("m_Enabled");
+		internal bool alwaysEnabled = false;
+		internal PostProcessingProfile profile;
+		internal PostProcessingInspector inspector;
 
-            OnEnable();
-        }
+		internal void OnPreEnable ()
+		{
+			m_SettingsProperty = serializedProperty.FindPropertyRelative ("m_Settings");
+			m_EnabledProperty = serializedProperty.FindPropertyRelative ("m_Enabled");
 
-        public virtual void OnEnable()
-        {}
+			OnEnable ();
+		}
 
-        public virtual void OnDisable()
-        {}
+		public virtual void OnEnable ()
+		{
+		}
 
-        internal void OnGUI()
-        {
-            GUILayout.Space(5);
+		public virtual void OnDisable ()
+		{
+		}
 
-            var display = alwaysEnabled
-                ? EditorGUIHelper.Header(serializedProperty.displayName, m_SettingsProperty, Reset)
-                : EditorGUIHelper.Header(serializedProperty.displayName, m_SettingsProperty, m_EnabledProperty, Reset);
+		internal void OnGUI ()
+		{
+			GUILayout.Space (5);
 
-            if (display)
-            {
-                EditorGUI.indentLevel++;
-                using (new EditorGUI.DisabledGroupScope(!m_EnabledProperty.boolValue))
-                {
-                    OnInspectorGUI();
-                }
-                EditorGUI.indentLevel--;
-            }
-        }
+			var display = alwaysEnabled
+                ? EditorGUIHelper.Header (serializedProperty.displayName, m_SettingsProperty, Reset)
+                : EditorGUIHelper.Header (serializedProperty.displayName, m_SettingsProperty, m_EnabledProperty, Reset);
 
-        void Reset()
-        {
-            var obj = serializedProperty.serializedObject;
-            Undo.RecordObject(obj.targetObject, "Reset");
-            target.Reset();
-            EditorUtility.SetDirty(obj.targetObject);
-        }
+			if (display) {
+				EditorGUI.indentLevel++;
+				using (new EditorGUI.DisabledGroupScope (!m_EnabledProperty.boolValue)) {
+					OnInspectorGUI ();
+				}
+				EditorGUI.indentLevel--;
+			}
+		}
 
-        public virtual void OnInspectorGUI()
-        {}
+		void Reset ()
+		{
+			var obj = serializedProperty.serializedObject;
+			Undo.RecordObject (obj.targetObject, "Reset");
+			target.Reset ();
+			EditorUtility.SetDirty (obj.targetObject);
+		}
 
-        public void Repaint()
-        {
-            inspector.Repaint();
-        }
+		public virtual void OnInspectorGUI ()
+		{
+		}
 
-        protected SerializedProperty FindSetting<T, TValue>(Expression<Func<T, TValue>> expr)
-        {
-            return m_SettingsProperty.FindPropertyRelative(ReflectionUtils.GetFieldPath(expr));
-        }
+		public void Repaint ()
+		{
+			inspector.Repaint ();
+		}
 
-        protected SerializedProperty FindSetting<T, TValue>(SerializedProperty prop, Expression<Func<T, TValue>> expr)
-        {
-            return prop.FindPropertyRelative(ReflectionUtils.GetFieldPath(expr));
-        }
-    }
+		protected SerializedProperty FindSetting<T, TValue> (Expression<Func<T, TValue>> expr)
+		{
+			return m_SettingsProperty.FindPropertyRelative (ReflectionUtils.GetFieldPath (expr));
+		}
+
+		protected SerializedProperty FindSetting<T, TValue> (SerializedProperty prop, Expression<Func<T, TValue>> expr)
+		{
+			return prop.FindPropertyRelative (ReflectionUtils.GetFieldPath (expr));
+		}
+	}
 }
