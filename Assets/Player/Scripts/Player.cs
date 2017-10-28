@@ -1,72 +1,79 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
-using System.Globalization;
-using UnityEngine.Networking.NetworkSystem;
+using UnityEngine.PostProcessing;
+using System;
 
 public class Player : MonoBehaviour {
 
-	#region Properties
-	private Animator playerAnimator;
-	private Rigidbody playerRigidbody;
-	public float movementSpeed = 100f;
-	#endregion
-
 	void Start () {
-		playerAnimator = GetComponent<Animator> ();
-		playerRigidbody = GetComponent<Rigidbody> ();
-
-		deathAnimations = new List<string>();
-		deathAnimations.Add (DEATH_FRONT);
-		deathAnimations.Add (DEATH_BACK);
+		animator = GetComponent<Animator> ();
+		controller = GetComponent<CharacterController> ();
 	}
 
 	void Update () {
-		playAnimationWhenPressMouseButton (playerAnimator, nextDeathAnimation (), MIDDLE_MOUSE_BUTTON);
-
-		float horozontal = Input.GetAxis ("Horizontal");
-		float vertical = Input.GetAxis ("Vertical");
-
-		playerAnimator.SetFloat ("inputHorizontal", horozontal);
-		playerAnimator.SetFloat ("inputVertical", vertical);
-
-		float horizontalMovement = horozontal  * movementSpeed * Time.deltaTime;
-		float vertitalMovement = vertical * movementSpeed * Time.deltaTime;
-		playerRigidbody.velocity = new Vector3 (horizontalMovement, 0f, vertitalMovement);
-
-
-		playerAnimator.transform.parent.position = playerAnimator.transform.position;
+		this.UpdateMovement ();
+		this.UpdateAnimation ();
 	}
 
-	private string nextDeathAnimation ()
+	void UpdateAnimation() {
+		if (controller.isGrounded) {
+			animator.SetFloat ("forward-back", this.GetVertical ());
+			animator.SetFloat ("left-right", this.GetHorizontal ());
+		}
+		animator.SetBool ("isGrounded", controller.isGrounded);
+	}
+
+	void UpdateMovement ()
 	{
-		return deathAnimations[Random.Range (0, deathAnimations.Count)];
+		if (controller.isGrounded) {
+			moveDirection = new Vector3 (this.GetHorizontal (), 0, this.GetVertical ());
+			moveDirection = transform.TransformDirection (moveDirection);
+			moveDirection *= runSpeed;
+			if (this.IsJump ()) moveDirection.y = jumpSpeed;
+		}
+		moveDirection.y -= gravity * Time.deltaTime;
+		controller.Move (moveDirection * Time.deltaTime);
+
+		transform.Rotate(0, GetMouseHorizontal () * rotationSpeed, 0);
+	}
+		
+	Boolean IsJump() {
+		return Input.GetButton ("Jump");
 	}
 
-	#region Util methods
-	public static void playAnimationWhenPressKey (Animator animator, string animationName, string keyName)
+	float GetVertical ()
 	{
-		if (Input.GetKeyDown (keyName))
-			animator.Play (animationName, -1, 0f);
+		return Input.GetAxis ("Vertical");
 	}
-	public static void playAnimationWhenPressMouseButton (Animator animator, string animationName, int button)
+
+	float GetHorizontal ()
 	{
-		if (Input.GetMouseButtonDown(button))
-			animator.Play (animationName, -1, 0f);
+		return Input.GetAxis ("Horizontal");
 	}
-	#endregion
 
-	#region Constants
-	private const string DEATH_FRONT = "death_from_the_front";
-	private const string DEATH_BACK = "death_from_the_back";
-
-	private const string KEY_ONE = "1";
-	private const string KEY_TWO = "2";
-	private const string KEY_THREE = "3";
-	private const int MIDDLE_MOUSE_BUTTON = 0;
-	#endregion
+	static float GetMouseHorizontal ()
+	{
+		return Input.GetAxis ("Mouse X");
+	}
 
 	#region Attributes
-	private List<string> deathAnimations;
+	Animator animator;
+
+	CharacterController controller;
+
+	[SerializeField]
+	float runSpeed = 10f;
+
+	[SerializeField]
+	float jumpSpeed = 10f;
+
+	[SerializeField]
+	float rotationSpeed = 500f;
+
+	[SerializeField]
+	float gravity = 10f;
+
+	Vector3 moveDirection = Vector3.zero;
 	#endregion
 }
-
