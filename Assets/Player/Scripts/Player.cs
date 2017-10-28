@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PostProcessing;
 using System;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
 	void Start () {
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<CharacterController> ();
+
 	}
 
 	void Update () {
@@ -22,6 +24,7 @@ public class Player : MonoBehaviour {
 			animator.SetFloat ("left-right", this.GetHorizontal ());
 		}
 		animator.SetBool ("isGrounded", controller.isGrounded);
+		animator.SetFloat ("rotate", this.GetMouseHorizontal ());
 	}
 
 	void UpdateMovement ()
@@ -52,7 +55,7 @@ public class Player : MonoBehaviour {
 		return Input.GetAxis ("Horizontal");
 	}
 
-	static float GetMouseHorizontal ()
+	float GetMouseHorizontal ()
 	{
 		return Input.GetAxis ("Mouse X");
 	}
