@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
+// [RequireComponent (typeof(LookAtMouse))]
 public class Player : MonoBehaviour
 {
 
@@ -35,6 +36,12 @@ public class Player : MonoBehaviour
 		transform.Rotate (0, GetMouseHorizontal () * rotationSpeed, 0);
 	}
 
+	void LateUpdate ()
+	{
+		chestBone.LookAt (aimTarget.position);
+		chestBone.rotation = chestBone.rotation * Quaternion.Euler (aimOffset);
+	}
+
 	#endregion
 
 	#region Input
@@ -67,6 +74,7 @@ public class Player : MonoBehaviour
 	{
 		animator = GetComponent<Animator> ();
 		controller = GetComponent<CharacterController> ();
+		chestBone = animator.GetBoneTransform (HumanBodyBones.Chest);
 	}
 
 	#endregion
@@ -76,6 +84,14 @@ public class Player : MonoBehaviour
 	Animator animator;
 
 	CharacterController controller;
+
+	Transform chestBone;
+
+	[SerializeField]
+	Transform aimTarget;
+
+	[SerializeField]
+	Vector3 aimOffset;
 
 	[SerializeField]
 	float runSpeed = 10f;
