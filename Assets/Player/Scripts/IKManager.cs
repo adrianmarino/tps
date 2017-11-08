@@ -11,7 +11,7 @@ namespace TPS
 				return;
 			
 			animator.SetIKPositionWeight (AvatarIKGoal.LeftHand, leftHandWeigth);
-			animator.SetIKRotationWeight (AvatarIKGoal.LeftHand, leftHandWeigth);  
+			animator.SetIKRotationWeight (AvatarIKGoal.LeftHand, leftHandRotationWeigth);  
 			animator.SetIKPosition (AvatarIKGoal.LeftHand, leftHandTarget.position);
 			animator.SetIKRotation (AvatarIKGoal.LeftHand, leftHandTarget.rotation);
 		}
@@ -38,12 +38,16 @@ namespace TPS
 		[SerializeField]
 		float leftHandWeigth;
 
+		[SerializeField]
+		float leftHandRotationWeigth;
+
 		#endregion
 
 		public IKManager ()
 		{
 			isActive = true;
 			leftHandWeigth = 1f;
+			leftHandRotationWeigth = 1f;
 		}
 
 	}

@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TPS
 {
@@ -19,20 +18,23 @@ namespace TPS
 		#region Attributes
 
 		[SerializeField]
+		string name;
+
+		[SerializeField]
+		bool enable;
+
+		[SerializeField]
 		Transform transform;
 
 		[SerializeField]
 		Vector3 offset;
-
-
-		[SerializeField]
-		bool enable;
 
 		#endregion
 
 		public Bone ()
 		{
 			enable = true;
+			name = "";
 		}
 
 		public Bone (Transform transform, Vector3 offset)

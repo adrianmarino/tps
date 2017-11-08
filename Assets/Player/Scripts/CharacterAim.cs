@@ -17,7 +17,7 @@ namespace FPS
 		Vector3 GetTargetPosition ()
 		{
 			if (aimCamera != null) {
-				Vector3 forwardPoint = new Vector3 (1, 1, aimCamera.nearClipPlane * 10);
+				Vector3 forwardPoint = new Vector3 (0.5f, 0.5f, aimCamera.nearClipPlane + 10);
 				return aimCamera.ViewportToWorldPoint (forwardPoint);
 			}
 
